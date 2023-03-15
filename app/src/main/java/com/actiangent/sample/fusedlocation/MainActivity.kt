@@ -18,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
-import com.actiangent.sample.fusedlocation.ui.component.RationalePermissionDialog
+import com.actiangent.sample.fusedlocation.ui.component.PermissionDialog
 import com.actiangent.sample.fusedlocation.ui.theme.FusedLocationSampleTheme
 import com.actiangent.sample.fusedlocation.util.checkBuildVersion
 import com.actiangent.sample.fusedlocation.util.hasPermission
@@ -74,21 +74,19 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (uiState.showPermissionDialog) {
-                        if (checkBuildVersion(Build.VERSION_CODES.M)) {
-                            RationalePermissionDialog(
-                                onConfirm = { requestLocationPermission.launch(locationPermission) },
-                                onDismiss = { viewModel.permissionDialogShown() },
-                                title = "Access location",
-                                text = "This app need access to location, please grant the permission",
-                                onConfirmText = "Grant",
-                                onDismissText = "Dismiss",
-                                isPermanentlyDeclined = !shouldShowRequestPermissionsRationale(
-                                    COARSE_LOCATION_PERMISSION, FINE_LOCATION_PERMISSION
-                                ),
-                                requestPermissionRationaleText = "Please enable location permission on the app settings",
-                                goToAppSetting = { openAppSettings() }
-                            )
-                        }
+                        PermissionDialog(
+                            onConfirm = { requestLocationPermission.launch(locationPermission) },
+                            onDismiss = { viewModel.permissionDialogShown() },
+                            title = "Access location",
+                            text = "This app need access to location, please grant the permission",
+                            onConfirmText = "Grant",
+                            onDismissText = "Dismiss",
+                            isPermanentlyDeclined = !shouldShowRequestPermissionsRationale(
+                                COARSE_LOCATION_PERMISSION, FINE_LOCATION_PERMISSION
+                            ),
+                            requestPermissionRationaleText = "Please enable location permission on the app settings",
+                            goToAppSetting = { openAppSettings() }
+                        )
                     }
                 }
             }

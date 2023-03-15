@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'com.actiangent.sample.location'
-    compileSdk 33
+    compileSdk build_versions.compile_sdk
 
     defaultConfig {
-        minSdk 21
-        targetSdk 33
+        minSdk build_versions.min_sdk
+        targetSdk build_versions.target_sdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -31,9 +31,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.0-Beta"
-    api 'com.google.android.gms:play-services-location:21.0.1'
+    implementation deps.kotlin.coroutines
+    api deps.gms_location
 
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation deps.junit
 }

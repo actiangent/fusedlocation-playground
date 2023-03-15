@@ -45,6 +45,6 @@ fun ComponentActivity.requestPermissions(
     callback: (Set<Map.Entry<String, Boolean>>) -> Unit
 ) = registerForActivityResult(
     ActivityResultContracts.RequestMultiplePermissions()
-) { callback(it.entries) }.launch(permissions)
+) { callback(it.entries) }.launch(arrayOf(*permissions))
 
 fun checkBuildVersion(minSdk: Int): Boolean = (minSdk <= Build.VERSION.SDK_INT)

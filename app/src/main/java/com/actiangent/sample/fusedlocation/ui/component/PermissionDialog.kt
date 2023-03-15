@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun RationalePermissionDialog(
+fun PermissionDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     title: String,
@@ -21,7 +21,7 @@ fun RationalePermissionDialog(
     modifier: Modifier = Modifier
 ) {
     if (isPermanentlyDeclined) {
-        PermissionDialog(
+        PermissionInfoDialog(
             onConfirm = goToAppSetting,
             onDismiss = onDismiss,
             title = title,
@@ -31,7 +31,7 @@ fun RationalePermissionDialog(
             modifier = modifier
         )
     } else {
-        PermissionDialog(
+        PermissionInfoDialog(
             onConfirm = onConfirm,
             onDismiss = onDismiss,
             title = title,
@@ -44,7 +44,7 @@ fun RationalePermissionDialog(
 }
 
 @Composable
-fun PermissionDialog(
+private fun PermissionInfoDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     title: String,
@@ -70,5 +70,15 @@ fun PermissionDialog(
 @Preview(showBackground = false)
 @Composable
 private fun PermissionDialogPreview() {
-    PermissionDialog({}, {}, "Title", "Text", "Yes", "No")
+    PermissionDialog(
+        {},
+        {},
+        "Title",
+        "Text",
+        "Yes",
+        "No",
+        false,
+        "",
+        {},
+    )
 }
