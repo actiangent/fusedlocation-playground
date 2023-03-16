@@ -3,14 +3,16 @@ package com.actiangent.sample.fusedlocation
 import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.actiangent.sample.location.LocationProvider
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 data class MainUiState(
     val location: String = "No location",
     val showPermissionDialog: Boolean = false
 )
 
-class MainViewModel : ViewModel() {
+class MainViewModel(private val locationProvider: LocationProvider) : ViewModel() {
 
     private val _locationString = MutableStateFlow("")
     private val _isPermissionDialogShow = MutableStateFlow(false)
@@ -27,8 +29,8 @@ class MainViewModel : ViewModel() {
             initialValue = MainUiState()
         )
 
-    fun updateLocation(location: Location) {
-        _locationString.update { location.asString() }
+    fun getUpdatedLocation() = viewModelScope.launch {
+        _locationString.update { locationProvider.awaitUpdatedLocation().asString() }
     }
 
     fun showPermissionDialog() {

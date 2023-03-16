@@ -17,24 +17,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import com.actiangent.sample.fusedlocation.ui.component.PermissionDialog
 import com.actiangent.sample.fusedlocation.ui.theme.FusedLocationSampleTheme
 import com.actiangent.sample.fusedlocation.util.checkBuildVersion
 import com.actiangent.sample.fusedlocation.util.hasPermission
 import com.actiangent.sample.fusedlocation.util.openAppSettings
 import com.actiangent.sample.fusedlocation.util.shouldShowRequestPermissionsRationale
-import com.actiangent.sample.location.LocationProvider
-import kotlinx.coroutines.launch
 
 const val COARSE_LOCATION_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION
 const val FINE_LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var locationProvider: LocationProvider
-
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels(factoryProducer = {
+        ViewModelFactory(MainApplication.injection)
+    })
 
     private val locationPermission = arrayOf(COARSE_LOCATION_PERMISSION, FINE_LOCATION_PERMISSION)
     private val requestLocationPermission = registerForActivityResult(
@@ -42,11 +39,7 @@ class MainActivity : ComponentActivity() {
     ) { permissions ->
         if (permissions.all { it.value == true }) {
             viewModel.permissionDialogShown()
-
-            val onAwaitLocationUpdate: suspend () -> Unit = {
-                viewModel.updateLocation(locationProvider.awaitUpdatedLocation())
-            }
-            lifecycleScope.launch { onAwaitLocationUpdate() }
+            viewModel.getUpdatedLocation()
         } else {
             viewModel.showPermissionDialog()
         }
@@ -54,8 +47,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        locationProvider = LocationProvider(this)
 
         setContent {
             FusedLocationSampleTheme {
@@ -74,19 +65,21 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (uiState.showPermissionDialog) {
-                        PermissionDialog(
-                            onConfirm = { requestLocationPermission.launch(locationPermission) },
-                            onDismiss = { viewModel.permissionDialogShown() },
-                            title = "Access location",
-                            text = "This app need access to location, please grant the permission",
-                            onConfirmText = "Grant",
-                            onDismissText = "Dismiss",
-                            isPermanentlyDeclined = !shouldShowRequestPermissionsRationale(
-                                COARSE_LOCATION_PERMISSION, FINE_LOCATION_PERMISSION
-                            ),
-                            requestPermissionRationaleText = "Please enable location permission on the app settings",
-                            goToAppSetting = { openAppSettings() }
-                        )
+                        if (checkBuildVersion(Build.VERSION_CODES.M)) {
+                            PermissionDialog(
+                                onConfirm = { requestLocationPermission.launch(locationPermission) },
+                                onDismiss = { viewModel.permissionDialogShown() },
+                                title = "Access location",
+                                text = "This app need access to location, please grant the permission",
+                                onConfirmText = "Grant",
+                                onDismissText = "Dismiss",
+                                isPermanentlyDeclined = !shouldShowRequestPermissionsRationale(
+                                    COARSE_LOCATION_PERMISSION, FINE_LOCATION_PERMISSION
+                                ),
+                                requestPermissionRationaleText = "Please enable location permission on the app settings",
+                                goToAppSetting = { openAppSettings() }
+                            )
+                        }
                     }
                 }
             }
@@ -103,6 +96,8 @@ class MainActivity : ComponentActivity() {
             if (checkBuildVersion(Build.VERSION_CODES.M)) {
                 requestLocationPermission.launch(locationPermission)
             }
+        } else {
+            viewModel.getUpdatedLocation()
         }
 
     }
