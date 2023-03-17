@@ -86,7 +86,6 @@ fun LocationProvider.locationFlow(intervalMillis: Long) = callbackFlow<Location>
     // Wait for the consumer to cancel the coroutine and unregister
     // the callback. This suspends the coroutine until the Flow is closed.
     awaitClose {
-        // Clean up code goes here
         fusedLocationClient.removeLocationUpdates(callback)
     }
 }

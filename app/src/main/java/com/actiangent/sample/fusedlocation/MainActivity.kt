@@ -23,6 +23,7 @@ import com.actiangent.sample.fusedlocation.util.checkBuildVersion
 import com.actiangent.sample.fusedlocation.util.hasPermission
 import com.actiangent.sample.fusedlocation.util.openAppSettings
 import com.actiangent.sample.fusedlocation.util.shouldShowRequestPermissionsRationale
+import com.actiangent.sample.location.asString
 
 const val COARSE_LOCATION_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION
 const val FINE_LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
@@ -61,7 +62,8 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = uiState.location)
+                        Text(text = uiState.location.asString())
+                        Text(text = "Address is ${uiState.address?.adminArea}")
                     }
 
                     if (uiState.showPermissionDialog) {

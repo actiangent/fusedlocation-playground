@@ -8,7 +8,11 @@ class ViewModelFactory(private val injection: Injection) : ViewModelProvider.Fac
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(MainViewModel::class.java) -> MainViewModel(injection.locationProvider)
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> MainViewModel(
+                injection.locationProvider,
+                injection.geocoder
+            )
+
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         } as T
     }
